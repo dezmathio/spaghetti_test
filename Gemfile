@@ -1,6 +1,6 @@
 ruby '2.2.3'
 
-source :rubygems
+source 'https://rubygems.org' 
 
 gem 'capybara'
 gem 'poltergeist'
