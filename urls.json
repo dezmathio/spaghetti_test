@@ -1,0 +1,11 @@
+[
+	{   "type" : "reddit_homepage",
+		"url": "http://www.reddit.com",
+		"selector": ".submit-link"
+	},
+	{
+		"type": "reddit_jobs",
+		"url": "https://jobs.lever.co/reddit",
+		"selector": ".main-header-logo"
+	}
+]

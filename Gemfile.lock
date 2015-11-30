@@ -8,11 +8,14 @@ GEM
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
     cliver (0.3.2)
+    coderay (1.1.0)
     colored (1.2)
     command_line_reporter (3.3.6)
       colored (>= 1.2)
+    dotenv (2.0.2)
     mail (2.6.3)
       mime-types (>= 1.16, < 3)
+    method_source (0.8.2)
     mime-types (2.99)
     mini_portile2 (2.0.0)
     multi_json (1.11.2)
@@ -24,9 +27,14 @@ GEM
       cliver (~> 0.3.1)
       multi_json (~> 1.0)
       websocket-driver (>= 0.2.0)
+    pry (0.10.3)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
     rack (1.6.4)
     rack-test (0.6.3)
       rack (>= 1.0)
+    slop (3.6.0)
     websocket-driver (0.6.3)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.2)
@@ -39,6 +47,8 @@ PLATFORMS
 DEPENDENCIES
   capybara
   command_line_reporter (>= 3.0)
+  dotenv
   mail
   phantomjs
   poltergeist
+  pry

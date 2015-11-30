@@ -4,39 +4,14 @@ require 'command_line_reporter'
 require 'mail'
 require 'logger'
 require 'optparse'
-
+require 'pry'
+require 'dotenv'
 # Instructions in README.md or bundle exec loader.rb --help
 
 class LoadTest
 
 	include CommandLineReporter
-	TESTABLE_URLS =
-		[
-			{   type: 'business_name',
-				url: 'http://mantis.pod.weddingwire.com/shared/search?l=y&cid=y&hp=y&vss=y&name=Steve&geo=20815&commit=Find+Vendors',
-				selector: '.testing-catalog-header'
-			},
-			{
-				type: 'landing_page',
-				url: 'http://mantis.pod.weddingwire.com/ng/vendor-reviews',
-				selector: '.testing-find-vendors'
-			},
-			{ 
-				type: 'catalog_photo',
-				url: 'http://mantis.pod.weddingwire.com/shared/search?cid=11&geo=20815&geosr=20910&page=1&sort=1&view_type=photo', 
-				selector: '.testing-vendor-photo-tile'
-			}, 
-			{
-				type: 'catalog_list',
-				url: 'http://mantis.pod.weddingwire.com/shared/search?cid=11&geo=20815&geosr=20910&page=1&sort=1&view_type=list',
-				selector: '.testing-vendor-list-tile'
-			},
-			{
-				type: 'catalog_list_filter',
-				url: 'http://mantis.pod.weddingwire.com/shared/search?cid=11&geo=20815&geosr=20910&page=1&sort=1&view_type=list',
-				selector: '.testing-vendor-photo-tile'
-			}
-		].freeze
+	TESTABLE_URLS = JSON.parse(File.read('urls.json')).freeze
 
 	def initialize
 		@lol_array = Array.new
@@ -86,18 +61,18 @@ class LoadTest
 	def run	
 		debug = $options[:debug]
 
-		runs_per_page = 2
+		runs_per_page = 5
 		result_array = Array.new
 		TESTABLE_URLS.each do |hash|
 			@temp_results = Array.new
 			runs_per_page.times{
-				run_test(hash[:type], hash[:url], hash[:selector], debug)
+				run_test(hash['type'], hash['url'], hash['selector'], debug)
 			}
 			@lol_array.each do |result|
 				@temp_results << result[:time]
 			end
 			average = @temp_results.reduce(:+).to_f / @temp_results.size
-			result_array << [hash[:type], average.round(2)]
+			result_array << [hash['type'], average.round(2)]
 		end
 		puts " ~ "
 		if $options[:noemail]
@@ -126,7 +101,7 @@ class LoadTest
 		body_text = @results.to_s
 		mail = Mail.new do
 			from 'loadtestresults@fakedomain.com'
-			to 'janjos@weddingwire.com'
+			to ENV["RECEIVING_EMAIL"]
 			subject 'Load test results'
 			body body_text
 		end
@@ -154,6 +129,6 @@ OptionParser.new do |opts|
 		$options[:noemail] = n
 	end
 end.parse!
-
+Dotenv.load
 LoadTest.new.run_load_test
 
