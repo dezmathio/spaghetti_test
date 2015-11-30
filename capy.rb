@@ -137,11 +137,11 @@ class LoadTest
 		mail.deliver
 	end
 
-	def run_this_crap
+	def run_load_test
 		run
 		do_email_stuff unless @noemail
 	end
 end
 
-LoadTest.new.run_this_crap
+LoadTest.new.run_load_test
 
