@@ -2,18 +2,15 @@ require 'phantomjs'
 require 'capybara/poltergeist'
 require 'command_line_reporter'
 require 'mail'
+require 'logger'
+require 'optparse'
 
-# Instructions in README.md
+# Instructions in README.md or bundle exec loader.rb --help
 
 class LoadTest
+
 	include CommandLineReporter
-
-	def initialize
-		@lol_array = Array.new
-		@results = Array.new
-	end
-
-	def testable_urls
+	TESTABLE_URLS =
 		[
 			{   type: 'business_name',
 				url: 'http://mantis.pod.weddingwire.com/shared/search?l=y&cid=y&hp=y&vss=y&name=Steve&geo=20815&commit=Find+Vendors',
@@ -39,13 +36,15 @@ class LoadTest
 				url: 'http://mantis.pod.weddingwire.com/shared/search?cid=11&geo=20815&geosr=20910&page=1&sort=1&view_type=list',
 				selector: '.testing-vendor-photo-tile'
 			}
-		]
+		].freeze
 
-
+	def initialize
+		@lol_array = Array.new
+		@results = Array.new
+		@logger = Logger.new(STDOUT)
 	end
 
 	def aggregate_results(type, difference, net_traffic)
-
 		@lol_array << {type: type, time: difference, net_traffic_size: net_traffic}
 	end
 
@@ -54,44 +53,42 @@ class LoadTest
 			Capybara.javascript_driver = :poltergeist
 			browser = Capybara::Session.new(:poltergeist, timeout: 60)
 			start_time = Time.now
-			puts "Time: #{start_time}" if debug
+			@logger.info "Time: #{start_time}" if debug
 			browser.visit url
-			puts "#{type} currently executing..." if debug
+			@logger.info "#{type} currently executing..." if debug
 			browser.has_css?(selector_reference)
-			puts "Found element on ..." if debug
-			puts url if debug
+			@logger.info "Found element on ..." if debug
+			@logger.info url if debug
 			print '.' unless debug
 			if type == 'catalog_list_filter'
 				browser.all('label', :text => '100-199').first.click
 				browser.has_css?('.testing-vendor-photo-tile')
 			end
-			puts "....checking network!" if debug
+			@logger.info "....checking network!" if debug
 			network_traffic_size = browser.driver.network_traffic.size
-			puts "# of requests: #{network_traffic_size}" if debug
+			@logger.info "# of requests: #{network_traffic_size}" if debug
 			first_call_time = browser.driver.network_traffic.first.time
 			last_call_time = browser.driver.network_traffic.last.time
-			puts "Time for first call: #{first_call_time}"  if debug
-			puts "Time for last call: #{last_call_time}"  if debug
+			@logger.info "Time for first call: #{first_call_time}"  if debug
+			@logger.info "Time for last call: #{last_call_time}"  if debug
 			difference = last_call_time - first_call_time
-			puts "Difference: #{difference}".yellow  if debug
-			puts "Before opening browser until page load -> #{last_call_time - start_time}"  if debug
+			@logger.info "Difference: #{difference}".yellow  if debug
+			@logger.info "Before opening browser until page load -> #{last_call_time - start_time}"  if debug
 			aggregate_results(type, difference, network_traffic_size)
-			browser.driver.quit
 		rescue Capybara::Poltergeist::TimeoutError
 			print 'F'
-			browser.driver.quit
 			aggregate_results("#{type}-errored", 0, 0)
+		ensure
+			browser.driver.quit
 		end
 	end
 
 	def run	
-		debug = true if ARGV[0] == 'debug'
-		@noemail = true if (ARGV[0] == 'noemail') || (ARGV[1] == 'noemail')
+		debug = $options[:debug]
 
-		runs_per_page = 5
-		urls = testable_urls
+		runs_per_page = 2
 		result_array = Array.new
-		urls.each do |hash|
+		TESTABLE_URLS.each do |hash|
 			@temp_results = Array.new
 			runs_per_page.times{
 				run_test(hash[:type], hash[:url], hash[:selector], debug)
@@ -103,7 +100,7 @@ class LoadTest
 			result_array << [hash[:type], average.round(2)]
 		end
 		puts " ~ "
-		if @noemail
+		if $options[:noemail]
 			table(border: true) do
 				row do
 					column('Type', width: 20)
@@ -139,9 +136,24 @@ class LoadTest
 
 	def run_load_test
 		run
-		do_email_stuff unless @noemail
+		do_email_stuff unless $options[:noemail]
 	end
 end
+
+$options = {}
+OptionParser.new do |opts|
+	opts.banner = "Usage: bundle exec loader.rb [options]"
+	opts.on('-d', '--debug', 'Debug Script/Show constant Output') do |d|
+		$options[:debug] = d
+	end
+	opts.on('-h','--help', 'Display this screen') do
+		puts opts
+		exit
+	end
+	opts.on('-n', '--noemail', 'No Email Sent, Output Directly in Terminal') do |n|
+		$options[:noemail] = n
+	end
+end.parse!
 
 LoadTest.new.run_load_test
 

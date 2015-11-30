@@ -14,7 +14,6 @@ GEM
     mail (2.6.3)
       mime-types (>= 1.16, < 3)
     mime-types (2.99)
-    mime-types-data (3.2015.1120)
     mini_portile2 (2.0.0)
     multi_json (1.11.2)
     nokogiri (1.6.7)
