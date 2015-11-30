@@ -11,14 +11,14 @@ custom script to load test a couple urls
  
  This one will debug/show a lot of output for each request
  
- `bundle exec ruby loader.rb debug`
+ `bundle exec ruby loader.rb --debug`
  
  This one will print it out in a nice table for your own reference, and not email
  
- `bundle exec ruby loader.rb noemail`
+ `bundle exec ruby loader.rb --noemail`
  
- This one is self-explanatory (but needs to have debug as argv0, cuz im a lazy programmer)
+ This one is self-explanatory
  
- `bundle exec ruby loader.rb debug noemail`
+ `bundle exec ruby loader.rb -d -n`
  
  Happy "load" testing!
