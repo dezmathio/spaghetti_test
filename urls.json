@@ -1,6 +1,6 @@
 [
 	{   "type" : "business_name",
-		"url": "http://mantis.pod.weddingwire.com/shared/search?l=y&cid=y&hp=y&vss=y&name=Steve&geo=20815&commit=Find+Vendors",
+		"url": "http://mantis.pod.weddingwire.com/shared/search?l=y&cid=y&hp=y&vss=y&name=Jenna&geo=20815&commit=Find+Vendors",
 		"selector": ".testing-catalog-header"
 	},
 	{
@@ -23,4 +23,5 @@
 		"url": "http://mantis.pod.weddingwire.com/shared/search?cid=11&geo=20815&geosr=20910&page=1&sort=1&view_type=list",
 		"selector": ".testing-vendor-photo-tile"
 	}
+	
 ]
