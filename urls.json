@@ -1,11 +1,26 @@
 [
-	{   "type" : "reddit_homepage",
-		"url": "http://www.reddit.com",
-		"selector": ".submit-link"
+	{   "type" : "business_name",
+		"url": "http://mantis.pod.weddingwire.com/shared/search?l=y&cid=y&hp=y&vss=y&name=Steve&geo=20815&commit=Find+Vendors",
+		"selector": ".testing-catalog-header"
 	},
 	{
-		"type": "reddit_jobs",
-		"url": "https://jobs.lever.co/reddit",
-		"selector": ".main-header-logo"
+		"type": "landing_page",
+		"url": "http://mantis.pod.weddingwire.com/ng/vendor-reviews",
+		"selector": ".testing-find-vendors"
+	},
+	{ 
+		"type": "catalog_photo",
+		"url": "http://mantis.pod.weddingwire.com/shared/search?cid=11&geo=20815&geosr=20910&page=1&sort=1&view_type=photo", 
+		"selector": ".testing-vendor-photo-tile"
+	}, 
+	{
+		"type": "catalog_list",
+		"url": "http://mantis.pod.weddingwire.com/shared/search?cid=11&geo=20815&geosr=20910&page=1&sort=1&view_type=list",
+		"selector": ".testing-vendor-list-tile"
+	},
+	{
+		"type": "catalog_list_filter",
+		"url": "http://mantis.pod.weddingwire.com/shared/search?cid=11&geo=20815&geosr=20910&page=1&sort=1&view_type=list",
+		"selector": ".testing-vendor-photo-tile"
 	}
 ]
