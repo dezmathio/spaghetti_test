@@ -18,6 +18,16 @@
 		"url": "http://mantis.pod.weddingwire.com/shared/search?cid=11&geo=20815&geosr=20910&page=1&sort=1&view_type=list",
 		"selector": ".testing-vendor-list-tile"
 	},
+	{ 
+		"type": "catalog_photo_java",
+		"url": "http://mantis.pod.weddingwire.com/shared/Search?cid=11&geo=20815&geosr=20910&page=1&sort=1&view_type=photo", 
+		"selector": ".vendor-photo-tile"
+	}, 
+	{
+		"type": "catalog_list_java",
+		"url": "http://mantis.pod.weddingwire.com/shared/Search?cid=11&geo=20815&geosr=20910&page=1&sort=1&view_type=list",
+		"selector": ".searchVendorResultContentTopWords"
+	},
 	{
 		"type": "catalog_list_filter",
 		"url": "http://mantis.pod.weddingwire.com/shared/search?cid=11&geo=20815&geosr=20910&page=1&sort=1&view_type=list",

@@ -25,25 +25,24 @@ class LoadTest
 
 	def run_test(type, url, selector_reference, debug = false)
 		begin
-			Capybara.javascript_driver = :poltergeist
-			browser = Capybara::Session.new(:poltergeist, timeout: 60)
+			setup_browser
 			start_time = Time.now
 			@logger.info "Time: #{start_time}" if debug
-			browser.visit url
+			@page.visit url
 			@logger.info "#{type} currently executing..." if debug
-			browser.has_css?(selector_reference)
+			@page.has_css?(selector_reference)
 			@logger.info "Found element on ..." if debug
 			@logger.info url if debug
 			print '.' unless debug
 			if type == 'catalog_list_filter'
-				browser.all('label', :text => '100-199').first.click
-				browser.has_css?('.testing-vendor-photo-tile')
+				@page.all('label', :text => '100-199').first.click
+				@page.has_css?('.testing-vendor-photo-tile')
 			end
 			@logger.info "....checking network!" if debug
-			network_traffic_size = browser.driver.network_traffic.size
+			network_traffic_size = @page.driver.network_traffic.size
 			@logger.info "# of requests: #{network_traffic_size}" if debug
-			first_call_time = browser.driver.network_traffic.first.time
-			last_call_time = browser.driver.network_traffic.last.time
+			first_call_time = @page.driver.network_traffic.first.time
+			last_call_time = @page.driver.network_traffic.last.time
 			@logger.info "Time for first call: #{first_call_time}"  if debug
 			@logger.info "Time for last call: #{last_call_time}"  if debug
 			difference = last_call_time - first_call_time
@@ -52,10 +51,35 @@ class LoadTest
 			aggregate_results(type, difference, network_traffic_size)
 		rescue Capybara::Poltergeist::TimeoutError
 			print 'F'
+			binding.pry
 			aggregate_results("#{type}-errored", 0, 0)
 		ensure
-			browser.driver.quit
+			teardown_browser
 		end
+	end
+
+	def setup_browser
+		Capybara.register_driver :poltergeist do |app|
+			Capybara::Poltergeist::Driver.new(app, {js_errors: false, timeout: 10000, options: ['--load-images=no', '--ignore-ssl-errors=yes']})
+		end
+		Capybara.javascript_driver = :poltergeist
+		Capybara.current_driver = :poltergeist
+		@page = Capybara.page
+		@browser = Capybara.page.driver.browser
+		set_blacklisted_urls
+	end
+
+	def teardown_browser
+		sleep 0.1
+	    Capybara.reset_sessions!
+	    sleep 0.1
+	    Capybara.page.driver.reset!
+	    sleep 0.1
+	end
+
+	def set_blacklisted_urls
+		#currently not working
+		#@browser.page.driver.url_blacklist = ['www.google-analytics.com','cdn.walkme.com','www.googletagmanager.com']
 	end
 
 	def run	
